@@ -28,8 +28,9 @@ func (i Imperial) ToMetric() Metric {
 func (i Imperial) ToString() string {
 	/*
 		Still needs:
-		Simplify fractions, ie, 2/4 -> 1/2
-		Omit fractional component if close to zero, ie numerator rounds to 0
+
+		Other consideration:
+		Should think about splitting this function up and using helper functions
 	*/
 	precision := 4.0
 	feet := math.Floor(i.Feet)
@@ -37,7 +38,18 @@ func (i Imperial) ToString() string {
 	inch_whole := math.Floor(inch_dec)
 	inch_frac := (inch_dec - inch_whole) * precision
 
-	s := fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+	// Truncate the fraction if it is zero. Else, reduce fraction.
+	var s string
+	if int(inch_frac) == 0 {
+		s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
+	} else {
+		for int(inch_frac)%2 == 0 {
+			inch_frac = inch_frac / 2
+			precision = precision / 2
+		}
+		s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+	}
+
 	return s
 }
 
