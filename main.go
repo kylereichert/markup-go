@@ -28,6 +28,8 @@ func (i Imperial) ToMetric() Metric {
 func (i Imperial) ToString() string {
 	/*
 		Still needs:
+		Seems to be a rounding error. For example, 58.75m should convert to
+		192' 9", but the result is 192' 8 3/4"
 
 		Other consideration:
 		Should think about splitting this function up and using helper functions
@@ -36,6 +38,8 @@ func (i Imperial) ToString() string {
 	feet := math.Floor(i.Feet)
 	inch_dec := (i.Feet - feet) * 12
 	inch_whole := math.Floor(inch_dec)
+
+	// I think this is the problem line
 	inch_frac := (inch_dec - inch_whole) * precision
 
 	// Truncate the fraction if it is zero. Else, reduce fraction.
@@ -54,7 +58,10 @@ func (i Imperial) ToString() string {
 }
 
 func main() {
-	x := Imperial{6.875}
-	fmt.Println(x.ToString())
+	y := Metric{58.75}
+	x := y.ToImperial()
+	// x := Imperial{6.875}
+	z := x.ToString()
+	fmt.Println(z)
 
 }
