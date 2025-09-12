@@ -27,20 +27,14 @@ func (i Imperial) ToMetric() Metric {
 
 func (i Imperial) ToString() string {
 	/*
-		Still needs:
-		Seems to be a rounding error. For example, 58.75m should convert to
-		192' 9", but the result is 192' 8 3/4"
-
 		Other consideration:
 		Should think about splitting this function up and using helper functions
 	*/
-	precision := 4.0
+	precision := 8.0
 	feet := math.Floor(i.Feet)
 	inch_dec := (i.Feet - feet) * 12
 	inch_whole := math.Floor(inch_dec)
-
-	// I think this is the problem line
-	inch_frac := (inch_dec - inch_whole) * precision
+	inch_frac := math.Round((inch_dec - inch_whole) * precision)
 
 	// Truncate the fraction if it is zero. Else, reduce fraction.
 	var s string
@@ -51,14 +45,20 @@ func (i Imperial) ToString() string {
 			inch_frac = inch_frac / 2
 			precision = precision / 2
 		}
-		s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+		// in case the fractional component rounds to a whole number
+		if inch_frac == precision {
+			inch_whole += 1
+			s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
+		} else {
+			s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+		}
 	}
 
 	return s
 }
 
 func main() {
-	y := Metric{58.75}
+	y := Metric{58.7589}
 	x := y.ToImperial()
 	// x := Imperial{6.875}
 	z := x.ToString()
