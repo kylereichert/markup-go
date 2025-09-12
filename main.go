@@ -25,7 +25,7 @@ func (i Imperial) ToMetric() Metric {
 	}
 }
 
-func (i Imperial) ToString() string {
+func (i Imperial) ConvertToFraction() string {
 	/*
 		Other consideration:
 		Should think about splitting this function up and using helper functions
@@ -50,18 +50,21 @@ func (i Imperial) ToString() string {
 			inch_whole += 1
 			s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
 		} else {
-			s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+			s =
+				fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
 		}
 	}
 
 	return s
 }
 
+// func (i Imperial) ImpStringToMetric() string
+
 func main() {
 	y := Metric{58.7589}
 	x := y.ToImperial()
 	// x := Imperial{6.875}
-	z := x.ToString()
+	z := x.ConvertToFraction()
 	fmt.Println(z)
 
 }
