@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strings"
 )
 
 type Imperial struct {
@@ -62,9 +63,15 @@ func (i Imperial) AsFraction() string {
 	return ConvertToFraction(i.Feet)
 }
 
-// func ConvertToDecimal(feet string) float64 {
-// 	// Need to break up the string. Maybe into an array using delimiters
-// }
+func ConvertToDecimal(feet string) []string {
+	delimiters := "'\" /"
+
+	parts := strings.FieldsFunc(feet, func(r rune) bool {
+		return strings.ContainsRune(delimiters, r)
+	})
+
+	return parts
+}
 
 func main() {
 	y := Metric{58.7589}
@@ -73,4 +80,12 @@ func main() {
 	z := y.ToImperial().AsFraction()
 	fmt.Println(z)
 
+	test_frac := "5' 3 7/8\""
+	delimiters := " '\"'/"
+
+	parts := strings.FieldsFunc(test_frac, func(r rune) bool {
+		return strings.ContainsRune(delimiters, r)
+	})
+
+	fmt.Println(parts)
 }
