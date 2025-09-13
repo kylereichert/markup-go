@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"strconv"
 	"strings"
 )
 
@@ -63,14 +64,38 @@ func (i Imperial) AsFraction() string {
 	return ConvertToFraction(i.Feet)
 }
 
-func ConvertToDecimal(feet string) []string {
+func ConvertToDecimal(feet string) Imperial {
 	delimiters := "'\" /"
 
-	parts := strings.FieldsFunc(feet, func(r rune) bool {
+	strParts := strings.FieldsFunc(feet, func(r rune) bool {
 		return strings.ContainsRune(delimiters, r)
 	})
 
-	return parts
+	intParts := make([]int, len(strParts))
+
+	// Convert the string array into a int array
+	for i, s := range strParts {
+		val, err := strconv.Atoi(s)
+		if err != nil {
+			fmt.Println("error converting:", s, err)
+		}
+		intParts[i] = val
+	}
+
+	var decimalInch float64
+	var decimalFoot float64
+
+	partsLen := len(intParts)
+
+	if partsLen < 4 {
+		decimalInch = float64(intParts[1]) / 12.0
+	} else {
+		decimalInch = (float64(intParts[1]) + float64((intParts[2] / intParts[3]))) / 12.0
+	}
+
+	decimalFoot = float64(intParts[0]) + decimalInch
+
+	return Imperial{Feet: decimalFoot}
 }
 
 func main() {
@@ -78,14 +103,13 @@ func main() {
 	// x := y.ToImperial()
 	// x := Imperial{6.875}
 	z := y.ToImperial().AsFraction()
+
+	x := ConvertToDecimal(z)
+	r := x.ToMetric()
+
+	fmt.Println(y.Meters)
 	fmt.Println(z)
-
-	test_frac := "5' 3 7/8\""
-	delimiters := " '\"'/"
-
-	parts := strings.FieldsFunc(test_frac, func(r rune) bool {
-		return strings.ContainsRune(delimiters, r)
-	})
-
-	fmt.Println(parts)
+	fmt.Println(x.Feet)
+	fmt.Println(r)
+	fmt.Println(r.ToImperial().AsFraction())
 }
