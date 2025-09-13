@@ -25,14 +25,14 @@ func (i Imperial) ToMetric() Metric {
 	}
 }
 
-func (i Imperial) ConvertToFraction() string {
+func ConvertToFraction(feet float64) string {
 	/*
 		Other consideration:
 		Should think about splitting this function up and using helper functions
 	*/
 	precision := 8.0
-	feet := math.Floor(i.Feet)
-	inch_dec := (i.Feet - feet) * 12
+	feet_floor := math.Floor(feet)
+	inch_dec := (feet - feet_floor) * 12
 	inch_whole := math.Floor(inch_dec)
 	inch_frac := math.Round((inch_dec - inch_whole) * precision)
 
@@ -58,13 +58,15 @@ func (i Imperial) ConvertToFraction() string {
 	return s
 }
 
-// func (i Imperial) ImpStringToMetric() string
+func (i Imperial) AsFraction() string {
+	return ConvertToFraction(i.Feet)
+}
 
 func main() {
 	y := Metric{58.7589}
-	x := y.ToImperial()
+	// x := y.ToImperial()
 	// x := Imperial{6.875}
-	z := x.ConvertToFraction()
+	z := y.ToImperial().AsFraction()
 	fmt.Println(z)
 
 }
