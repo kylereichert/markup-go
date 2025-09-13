@@ -89,8 +89,9 @@ func ConvertToDecimal(feet string) Imperial {
 
 	if partsLen < 4 {
 		decimalInch = float64(intParts[1]) / 12.0
+		fmt.Println("yert")
 	} else {
-		decimalInch = (float64(intParts[1]) + float64((intParts[2] / intParts[3]))) / 12.0
+		decimalInch = (float64(intParts[1]) + float64(intParts[2])/float64(intParts[3])) / 12.0
 	}
 
 	decimalFoot = float64(intParts[0]) + decimalInch
