@@ -62,6 +62,10 @@ func (i Imperial) AsFraction() string {
 	return ConvertToFraction(i.Feet)
 }
 
+// func ConvertToDecimal(feet string) float64 {
+// 	// Need to break up the string. Maybe into an array using delimiters
+// }
+
 func main() {
 	y := Metric{58.7589}
 	// x := y.ToImperial()
