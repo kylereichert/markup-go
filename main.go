@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"fyne.io/fyne/v2/app"
 	// "fyne.io/fyne/v2/widget"
 	"github.com/kylereichert/markup-go/calc"
-	"github.com/kylereichert/markup-go/gui"
 )
 
 func main() {
@@ -22,7 +20,4 @@ func main() {
 	fmt.Println(r)
 	fmt.Println(r.ToImperial().AsFraction())
 
-	// GUI App entry point
-	a := app.New()
-	gui.Run(a)
 }
