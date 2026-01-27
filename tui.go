@@ -5,23 +5,24 @@ import (
 	"strconv"
 	"strings"
 
-	tea "github.com/charmbracelet/bubbletea"
+	"github.com/kylereichert/markup-go/calc"
+
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
-
 const (
-	inputTOJ = 0
-	inputUSJ = 1
-	inputATF = 2
-	inputTOS = 3
+	inputUSJ             = 0
+	inputTOJ             = 1
+	inputATF             = 2
+	inputTOS             = 3
 	inputGarageHighPoint = 4
-	inputFrontLeft = 5
-	inputFrontRight = 6
-	inputBackLeft = 7
-	inputBackRight = 8
+	inputFrontLeft       = 5
+	inputFrontRight      = 6
+	inputBackLeft        = 7
+	inputBackRight       = 8
 )
 
 var (
@@ -68,17 +69,16 @@ func initialModel() model {
 		t.Width = inputWidth
 		t.Validate = numericValidator
 
-
 		switch i {
-		case inputTOJ:
-			t.Placeholder = "Enter TOJ"
+		case inputUSJ:
+			t.Placeholder = "Enter USJ"
 			t.Width = inputWidth
 			t.Focus()
 			// t.CharLimit = defaultInputLim
 			// t.TextStyle = focusedStyle
 			// t.PromptStyle = focusedStyle
-		case inputUSJ:
-			t.Placeholder = "Enter USJ"
+		case inputTOJ:
+			t.Placeholder = "Enter TOJ"
 		case inputATF:
 			t.Placeholder = "Enter ATF"
 		case inputTOS:
@@ -109,7 +109,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "ctrl+c", "esc":
+		case "ctrl+c":
 			return m, tea.Quit
 
 		// Set focus to next input
@@ -184,26 +184,46 @@ func (m model) View() string {
 		// better than a loop here
 		if m.inputs[i].Value() != "" && m.inputs[i].Err == nil {
 			val, _ := strconv.ParseFloat(m.inputs[i].Value(), 64)
-
+			// Covers necessary use cases, but should consider arbitrary calcs
 			switch i {
 			case inputUSJ:
+				// metricUSJ := calc.Metric{Meters: val}
+				// imperialUSJ := metricUSJ.ToImperial().AsFraction()
 				view += fmt.Sprintf("USJ: %.2f", val)
 			case inputTOJ:
-				view += fmt.Sprintf("TOJ: %.2f", val)
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				beamSize := calc.Metric{Meters: val - usj}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Beam Size: %s", beamSize)
 			case inputATF:
-				view += fmt.Sprintf("ATF: %.2f", val)
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				wallHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Wall Height: %s", wallHeight)
 			case inputTOS:
-				view += fmt.Sprintf("TOS: %.2f", val)
+				// Consider adding that 5" maybe? Or should I keep doing it mentally?
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				slabHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Garage Opening Drop: %s", slabHeight)
 			case inputGarageHighPoint:
-				view += fmt.Sprintf("TBD: %.2f", val)
+				// Again, should i account for the 9" or no?
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				garageWallHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Garage Wall Drop: %s", garageWallHeight)
 			case inputFrontLeft:
-				view += fmt.Sprintf("TBD: %.2f", val)
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				frontLeftHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Front Left Drop: %s", frontLeftHeight)
 			case inputFrontRight:
-				view += fmt.Sprintf("TBD: %.2f", val)
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				frontRightHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Front Right Drop: %s", frontRightHeight)
 			case inputBackLeft:
-				view += fmt.Sprintf("TBD: %.2f", val)
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				backLeftHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Back Left Drop: %s", backLeftHeight)
 			case inputBackRight:
-				view += fmt.Sprintf("TBD: %.2f", val)
+				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
+				backRightHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				view += fmt.Sprintf("Back Right Drop: %s", backRightHeight)
 			}
 		}
 
@@ -226,4 +246,3 @@ func (m model) View() string {
 
 	return b.String()
 }
-

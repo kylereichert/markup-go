@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 )
+
 func main() {
 	// Some testing for the conversion logic and imperial string formatting
 	// y := calc.Metric{Meters: 58.7589}
@@ -20,7 +21,11 @@ func main() {
 	// fmt.Println(r)
 	// fmt.Println(r.ToImperial().AsFraction())
 
-	if _, err := tea.NewProgram(initialModel()).Run(); err != nil {
+	p := tea.NewProgram(
+		initialModel(),
+		tea.WithAltScreen(),
+	)
+	if _, err := p.Run(); err != nil {
 		fmt.Printf("Could not start program: %s\n", err)
 		os.Exit(1)
 	}
