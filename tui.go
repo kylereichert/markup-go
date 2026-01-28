@@ -199,14 +199,19 @@ func (m model) View() string {
 				wallHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
 				view += fmt.Sprintf("Wall Height: %s", wallHeight)
 			case inputTOS:
-				// Consider adding that 5" maybe? Or should I keep doing it mentally?
+				// Displays the garage opening depth at 5" below TOS
+				offset := calc.ConvertToDecimal("0' 5\"").ToMetric().Meters
 				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
-				slabHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				slabHeight := calc.Metric{Meters: usj - val + offset}.ToImperial().AsFraction()
 				view += fmt.Sprintf("Garage Opening Drop: %s", slabHeight)
 			case inputGarageHighPoint:
-				// Again, should i account for the 9" or no?
+				// Displays drop to highest point of the grade around the garage.
+				// Currently sets the wall height 10" above the grade elevation
+				// NOTE: Somethinig is wrong, the 10" entry simply doesn't work
+				// Will need to find the source of the error in the calcs package
+				offset := calc.ConvertToDecimal("0' 10\"").ToMetric().Meters
 				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
-				garageWallHeight := calc.Metric{Meters: usj - val}.ToImperial().AsFraction()
+				garageWallHeight := calc.Metric{Meters: (usj - val) - offset}.ToImperial().AsFraction()
 				view += fmt.Sprintf("Garage Wall Drop: %s", garageWallHeight)
 			case inputFrontLeft:
 				usj, _ := strconv.ParseFloat(m.inputs[inputUSJ].Value(), 64)
