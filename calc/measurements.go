@@ -54,7 +54,7 @@ func ConvertToFraction(feet float64) string {
 			s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
 		}
 	} else {
-		for int(inch_frac)%2 == 0 {
+		for int(inch_frac) % 2 == 0 {
 			inch_frac = inch_frac / 2
 			precision = precision / 2
 		}
@@ -64,18 +64,16 @@ func ConvertToFraction(feet float64) string {
 		case true:
 			if inch_frac == precision {
 				inch_whole += 1
-				s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
+				s = fmt.Sprintf("%d' %d\"", int(feet_floor), int(inch_whole))
 			} else {
-				s =
-					fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
 			}
 		case false:
 			if inch_frac == precision {
 				inch_whole += 1
 				s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
 			} else {
-				s =
-					fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
 			}
 		}
 	}
@@ -90,7 +88,7 @@ func (i Imperial) AsFraction() string {
 func ConvertToDecimal(feet string) Imperial {
 	// Currently needs a footage or it will panic. i.e. 5" does not work, so use 0' 5"
 	// Should fix this in the future
-	delimiters := "'\" /"
+	delimiters := "' \" /"
 
 	strParts := strings.FieldsFunc(feet, func(r rune) bool {
 		return strings.ContainsRune(delimiters, r)
