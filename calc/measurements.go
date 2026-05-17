@@ -33,7 +33,7 @@ func ConvertToFraction(feet float64, precision ...float64) string {
 		to split the whole and fractional/decimal part
 	*/
 	actualPrecision := 8.0
-	if precision[0] != actualPrecision {
+	if precision != nil {
 		actualPrecision = precision[0]
 	}
 
@@ -41,7 +41,7 @@ func ConvertToFraction(feet float64, precision ...float64) string {
 	feet_floor, inch_dec := math.Modf(feet)
 	inch_whole, inch_frac := math.Modf(math.Abs(inch_dec * 12)) // Convert to inches
 	inch_frac = math.Round(inch_frac * actualPrecision)
-
+	feet_floor = math.Abs(feet_floor)
 
 	// This is now in imperial, but needs to be fractional.
 	// inch_whole, inch_frac := math.Modf(inch_dec)
@@ -58,6 +58,7 @@ func ConvertToFraction(feet float64, precision ...float64) string {
 	}
 
 	// Truncate the fraction if it is zero. Else, reduce fraction.
+
 	var s string
 	if int(inch_frac) == 0 {
 		switch isNegative {
@@ -71,19 +72,34 @@ func ConvertToFraction(feet float64, precision ...float64) string {
 			inch_frac = inch_frac / 2
 			actualPrecision = actualPrecision / 2
 		}
+
+		/*
+			Might need to cascade the fractional inch to the whole inch, and then
+			possibly the footage. I think the only place where the rounding will
+			have to occur will be when the numerator rounds up to match the precision.
+			A greater numerator should not be possible
+		*/
+
+		if inch_frac == actualPrecision {
+			inch_frac, actualPrecision = 0, 0
+			inch_whole++
+			if inch_whole >= 12 {
+				inch_whole = float64(int(inch_whole) - (int(inch_whole) - 12))
+				feet_floor++
+			}
+		}
+
 		// in case the fractional component rounds to a whole number
 
 		switch isNegative {
 		case true:
-			if inch_frac == actualPrecision {
-				inch_whole += 1
+			if inch_frac == 0 {
 				s = fmt.Sprintf("%d' %d\"", int(feet_floor), int(inch_whole))
 			} else {
 				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(actualPrecision))
 			}
 		case false:
-			if inch_frac == actualPrecision {
-				inch_whole += 1
+			if inch_frac == 0 {
 				s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
 			} else {
 				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(actualPrecision))
