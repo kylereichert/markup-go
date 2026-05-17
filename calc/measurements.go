@@ -29,15 +29,20 @@ func (i Imperial) ToMetric() Metric {
 
 func ConvertToFraction(feet float64) string {
 	/*
-		Other consideration:
-		Should think about splitting this function up and using helper functions
-		TODO: Does not handle negative inputs, AFAIK
+		Maybe split into helper functions. Using Modf here would be a better way
+		to split the whole and fractional/decimal part
 	*/
 	precision := 8.0
+	// feet_floor, inch_dec = math.Modf(feet)
+	// inch_dec, inch_frac = math.Modf(math.Abs(inch_dec * 12)) // Convert to inches
+	// inch_frac
+	// inch_whole, inch_frac = math.Modf(inch_dec)
+
 	feet_floor := math.Floor(feet)
 	inch_dec := (feet - feet_floor) * 12
 	inch_whole := math.Floor(inch_dec)
 	inch_frac := math.Round((inch_dec - inch_whole) * precision)
+
 	isNegative := false
 
 	if feet < 0 {
@@ -54,7 +59,7 @@ func ConvertToFraction(feet float64) string {
 			s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
 		}
 	} else {
-		for int(inch_frac) % 2 == 0 {
+		for int(inch_frac)%2 == 0 {
 			inch_frac = inch_frac / 2
 			precision = precision / 2
 		}
