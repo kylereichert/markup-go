@@ -27,21 +27,29 @@ func (i Imperial) ToMetric() Metric {
 	}
 }
 
-func ConvertToFraction(feet float64) string {
+func ConvertToFraction(feet float64, precision ...float64) string {
 	/*
 		Maybe split into helper functions. Using Modf here would be a better way
 		to split the whole and fractional/decimal part
 	*/
-	precision := 8.0
-	// feet_floor, inch_dec = math.Modf(feet)
-	// inch_dec, inch_frac = math.Modf(math.Abs(inch_dec * 12)) // Convert to inches
-	// inch_frac
-	// inch_whole, inch_frac = math.Modf(inch_dec)
+	actualPrecision := 8.0
+	if precision[0] != actualPrecision {
+		actualPrecision = precision[0]
+	}
 
-	feet_floor := math.Floor(feet)
-	inch_dec := (feet - feet_floor) * 12
-	inch_whole := math.Floor(inch_dec)
-	inch_frac := math.Round((inch_dec - inch_whole) * precision)
+	// precision := 8.0
+	feet_floor, inch_dec := math.Modf(feet)
+	inch_whole, inch_frac := math.Modf(math.Abs(inch_dec * 12)) // Convert to inches
+	inch_frac = math.Round(inch_frac * actualPrecision)
+
+
+	// This is now in imperial, but needs to be fractional.
+	// inch_whole, inch_frac := math.Modf(inch_dec)
+
+	// feet_floor := math.Floor(feet)
+	// inch_dec := (feet - feet_floor) * 12
+	// inch_whole := math.Floor(inch_dec)
+	// inch_frac := math.Round((inch_dec - inch_whole) * precision)
 
 	isNegative := false
 
@@ -61,24 +69,24 @@ func ConvertToFraction(feet float64) string {
 	} else {
 		for int(inch_frac)%2 == 0 {
 			inch_frac = inch_frac / 2
-			precision = precision / 2
+			actualPrecision = actualPrecision / 2
 		}
 		// in case the fractional component rounds to a whole number
 
 		switch isNegative {
 		case true:
-			if inch_frac == precision {
+			if inch_frac == actualPrecision {
 				inch_whole += 1
 				s = fmt.Sprintf("%d' %d\"", int(feet_floor), int(inch_whole))
 			} else {
-				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(actualPrecision))
 			}
 		case false:
-			if inch_frac == precision {
+			if inch_frac == actualPrecision {
 				inch_whole += 1
 				s = fmt.Sprintf("%d' %d\"", int(feet), int(inch_whole))
 			} else {
-				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(precision))
+				s = fmt.Sprintf("%d' %d %d/%d\"", int(feet), int(inch_whole), int(inch_frac), int(actualPrecision))
 			}
 		}
 	}
