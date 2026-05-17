@@ -113,7 +113,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		// Set focus to next input
-		case "tab", "shift+tab", "enter", "up", "down":
+		case "tab", "shift+tab", "enter", "up", "down", "ctrl+n", "ctrl+p":
 			// toj, _ := strconv.ParseFloat(m.inputs[inputTOJ].Value(), 64)
 			s := msg.String()
 
@@ -124,7 +124,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			// Cycle indexes
-			if s == "up" || s == "shift+tab" {
+			if s == "up" || s == "shift+tab" || s == "ctrl+p" {
 				m.focusIndex--
 			} else {
 				m.focusIndex++

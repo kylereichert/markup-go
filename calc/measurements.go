@@ -37,19 +37,10 @@ func ConvertToFraction(feet float64, precision ...float64) string {
 		actualPrecision = precision[0]
 	}
 
-	// precision := 8.0
 	feet_floor, inch_dec := math.Modf(feet)
 	inch_whole, inch_frac := math.Modf(math.Abs(inch_dec * 12)) // Convert to inches
 	inch_frac = math.Round(inch_frac * actualPrecision)
 	feet_floor = math.Abs(feet_floor)
-
-	// This is now in imperial, but needs to be fractional.
-	// inch_whole, inch_frac := math.Modf(inch_dec)
-
-	// feet_floor := math.Floor(feet)
-	// inch_dec := (feet - feet_floor) * 12
-	// inch_whole := math.Floor(inch_dec)
-	// inch_frac := math.Round((inch_dec - inch_whole) * precision)
 
 	isNegative := false
 
